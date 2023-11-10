@@ -1,0 +1,42 @@
+import sys
+import requests
+
+import sys
+import numpy as np
+import pandas as pd
+  
+if __name__== '__main__':
+    
+    def RequestCsv(url: str):
+        response = requests.get(url)
+        try:
+            api_data = response.text
+            with open('data.csv', 'w') as f:
+                f.write(api_data)
+                print('Archivo Listo')
+        except requests.exceptions.RequestException:
+            print('Problema con la solicitud HTTP')
+        except Exception as e:
+            print(f'Error inesperado: {e}')
+
+        if len(sys.argv) < 2:
+            print("Debe proporcionar una URL como argumento.")
+            sys.exit(1)
+
+    url = sys.argv[1]
+RequestCsv(url)
+
+def crear_df():
+    df_data = pd.read_csv('data.csv', delimiter=',')
+
+    bins = [0, 12, 19, 39, 59, 120]
+    labels = ['Niño', 'Adolescente', 'Jóvenes adulto', 'Adulto', 'Adulto mayor']
+
+    df_data['Grupo de edad'] = pd.cut(df_data['age'], bins=bins, labels=labels)
+    df_data.to_csv('datos.csv', index=False)
+    return df_data
+
+
+if __name__ == "__main__":
+    crear_df()
+
